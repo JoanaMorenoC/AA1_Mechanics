@@ -15,34 +15,62 @@ public class GravityPhysics : MonoBehaviour
 
     GravityPhysics[] otherPlanets;
 
-    // Start is called before the first frame update
     void Start()
     {
-        position = transform.position; 
+        position = transform.position;
         otherPlanets = transform.parent.GetComponentsInChildren<GravityPhysics>();
-        Debug.Log("OtherPlanets size "+ otherPlanets.Length);
-        Debug.Log("Este objeto es:"+gameObject.name + "  Ha encontrado: " + otherPlanets[0].gameObject.name);
+        Debug.Log("OtherPlanets size " + otherPlanets.Length);
+        Debug.Log("Este objeto es:" + gameObject.name + "  Ha encontrado: " + otherPlanets[0].gameObject.name);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        Vector3 newPosition = position + velocity * stepTime + acceleration * (stepTime * stepTime * 0.5f);
-        Vector3 newAcceleration = CalculateAcceleration();
-        Vector3 newVelocity = velocity + (acceleration + newAcceleration) * (stepTime * 0.5f);
- 
-        position = newPosition;
-        velocity = newVelocity;
-        acceleration = newAcceleration;
+        RungeKuttaIntegration(stepTime);
 
         transform.position = position;
     }
 
-    Vector3 CalculateGravitationForce(GravityPhysics other)
+    void RungeKuttaIntegration(float h)
     {
-        Vector3 forceDirection = other.GetPosition() - position;
+        Vector3 k1_v = velocity;
+        Vector3 k1_a = CalculateAcceleration();
+
+        Vector3 k2_v = velocity + k1_a * (h * 0.5f);
+        Vector3 k2_a = CalculateAccelerationAt(position + k1_v * (h * 0.5f));
+
+        Vector3 k3_v = velocity + k2_a * (h * 0.5f);
+        Vector3 k3_a = CalculateAccelerationAt(position + k2_v * (h * 0.5f));
+
+        Vector3 k4_v = velocity + k3_a * h;
+        Vector3 k4_a = CalculateAccelerationAt(position + k3_v * h);
+
+        velocity += (k1_a + 2f * k2_a + 2f * k3_a + k4_a) * (h / 6f);
+        position += (k1_v + 2f * k2_v + 2f * k3_v + k4_v) * (h / 6f);
+
+        acceleration = CalculateAcceleration();
+    }
+
+    Vector3 CalculateAccelerationAt(Vector3 pos)
+    {
+        Vector3 sumForces = Vector3.zero;
+        for (int i = 0; i < otherPlanets.Length; i++)
+        {
+            if (otherPlanets[i] == this)
+                continue;
+
+            sumForces += CalculateGravitationForce(otherPlanets[i], pos);
+        }
+
+        Vector3 acceleration = sumForces / mass;
+
+        return acceleration;
+    }
+
+    Vector3 CalculateGravitationForce(GravityPhysics other, Vector3 pos)
+    {
+        Vector3 forceDirection = other.GetPosition() - pos;
         float distance = forceDirection.magnitude;
-        forceDirection = forceDirection / forceDirection.magnitude;
+        forceDirection = forceDirection / distance;
 
         float forceMagnitude = (G * other.GetMass() * mass) / (distance * distance);
 
@@ -52,17 +80,15 @@ public class GravityPhysics : MonoBehaviour
     Vector3 CalculateAcceleration()
     {
         Vector3 sumForces = Vector3.zero;
-        for (int i = 0; i < otherPlanets.Length; i ++)
+        for (int i = 0; i < otherPlanets.Length; i++)
         {
             if (otherPlanets[i] == this)
                 continue;
 
-            sumForces += CalculateGravitationForce(otherPlanets[i]);
+            sumForces += CalculateGravitationForce(otherPlanets[i], position);
         }
 
-        Vector3 acceleration = sumForces / mass;
-
-        return acceleration;
+        return sumForces / mass;
     }
 
     Vector3 GetPosition()
@@ -71,7 +97,7 @@ public class GravityPhysics : MonoBehaviour
     }
 
     float GetMass()
-    { 
+    {
         return mass;
     }
 }
