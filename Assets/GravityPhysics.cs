@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class GravityPhysics : MonoBehaviour
 {
-    [SerializeField] float mass;
-    public static float stepTime = 0.001f;
+    [SerializeField] float massInSolarMassUnits;
+    public static float stepTime = 0.0001f;
 
     Vector3 position;
-    [SerializeField] Vector3 velocity;
+    [SerializeField] Vector3 velocityInUaPerYear;
     Vector3 acceleration;
 
     static float G = 39.478f;
@@ -32,19 +32,19 @@ public class GravityPhysics : MonoBehaviour
 
     void RungeKuttaIntegration(float h)
     {
-        Vector3 k1_v = velocity;
+        Vector3 k1_v = velocityInUaPerYear;
         Vector3 k1_a = CalculateAcceleration();
 
-        Vector3 k2_v = velocity + k1_a * (h * 0.5f);
+        Vector3 k2_v = velocityInUaPerYear + k1_a * (h * 0.5f);
         Vector3 k2_a = CalculateAccelerationAt(position + k1_v * (h * 0.5f));
 
-        Vector3 k3_v = velocity + k2_a * (h * 0.5f);
+        Vector3 k3_v = velocityInUaPerYear + k2_a * (h * 0.5f);
         Vector3 k3_a = CalculateAccelerationAt(position + k2_v * (h * 0.5f));
 
-        Vector3 k4_v = velocity + k3_a * h;
+        Vector3 k4_v = velocityInUaPerYear + k3_a * h;
         Vector3 k4_a = CalculateAccelerationAt(position + k3_v * h);
 
-        velocity += (k1_a + 2f * k2_a + 2f * k3_a + k4_a) * (h / 6f);
+        velocityInUaPerYear += (k1_a + 2f * k2_a + 2f * k3_a + k4_a) * (h / 6f);
         position += (k1_v + 2f * k2_v + 2f * k3_v + k4_v) * (h / 6f);
 
         acceleration = CalculateAcceleration();
@@ -61,7 +61,7 @@ public class GravityPhysics : MonoBehaviour
             sumForces += CalculateGravitationForce(otherPlanets[i], pos);
         }
 
-        Vector3 acceleration = sumForces / mass;
+        Vector3 acceleration = sumForces / massInSolarMassUnits;
 
         return acceleration;
     }
@@ -72,7 +72,7 @@ public class GravityPhysics : MonoBehaviour
         float distance = forceDirection.magnitude;
         forceDirection = forceDirection / distance;
 
-        float forceMagnitude = (G * other.GetMass() * mass) / (distance * distance);
+        float forceMagnitude = (G * other.GetMass() * massInSolarMassUnits) / (distance * distance);
 
         return forceMagnitude * forceDirection;
     }
@@ -88,7 +88,7 @@ public class GravityPhysics : MonoBehaviour
             sumForces += CalculateGravitationForce(otherPlanets[i], position);
         }
 
-        return sumForces / mass;
+        return sumForces / massInSolarMassUnits;
     }
 
     Vector3 GetPosition()
@@ -98,6 +98,6 @@ public class GravityPhysics : MonoBehaviour
 
     float GetMass()
     {
-        return mass;
+        return massInSolarMassUnits;
     }
 }
