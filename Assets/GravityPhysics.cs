@@ -5,7 +5,6 @@ using UnityEngine;
 public class GravityPhysics : MonoBehaviour
 {
     [SerializeField] float massInSolarMassUnits;
-    public static float stepTime = 0.0001f;
 
     Vector3 position;
     [SerializeField] Vector3 velocityInUaPerYear;
@@ -25,7 +24,7 @@ public class GravityPhysics : MonoBehaviour
 
     void Update()
     {
-        RungeKuttaIntegration(stepTime);
+        RungeKuttaIntegration(SimulationSettings.Instance.GetStepTime());
 
         transform.position = position;
     }
