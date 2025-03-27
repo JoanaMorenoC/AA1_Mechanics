@@ -21,6 +21,26 @@ public class SimulationSettings : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftArrow) && simulationSpeed > 0)
+        {
+            if (simulationSpeed <= 1 )
+                simulationSpeed -= 0.1f;
+            else
+                simulationSpeed -= 0.5f;
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if (simulationSpeed < 1)
+                simulationSpeed += 0.1f;
+            else
+                simulationSpeed += 0.5f;
+        }
+
+    }
+
+
     public float GetStepTime()
     {
         return baseStepTime * simulationSpeed;
