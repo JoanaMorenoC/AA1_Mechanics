@@ -1,30 +1,56 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
     public float rotationSensibility;
     public float movementSpeed;
+    public float transitionSpeed = 5f;
 
     Vector2 rotation;
 
-    // Start is called before the first frame update
+    bool isInTransition = false;
+    Vector3 targetPosition;
+    Quaternion targetRotation;
+    float lookAtAccuracyMargin = 0.001f;
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        ManageRotation();
-        ManageMovement();
+        if (isInTransition)
+        {
+            HandleTransition();
+        }
+        else
+        {
+            HandleRotation();
+            HandleMovement();
+        }
+
+        HandleInput();
     }
 
-    void ManageRotation()
+    void HandleTransition()
+    {
+        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * transitionSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * transitionSpeed);
+
+        if (Vector3.Distance(transform.position, targetPosition) < lookAtAccuracyMargin && Quaternion.Angle(transform.rotation, targetRotation) < 0.1f)
+        {
+            Vector3 angles = transform.eulerAngles;
+            rotation.x = angles.y;
+            rotation.y = angles.x;
+            isInTransition = false;
+        }
+    }
+
+    void HandleRotation()
     {
         float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSensibility;
         float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * rotationSensibility;
@@ -35,7 +61,7 @@ public class CameraMovement : MonoBehaviour
         transform.rotation = Quaternion.Euler(rotation.y, rotation.x, 0);
     }
 
-    void ManageMovement()
+    void HandleMovement()
     {
         Vector3 input = Vector2.zero;
 
@@ -55,12 +81,36 @@ public class CameraMovement : MonoBehaviour
         Vector3 movementDirection = transform.forward * input.z + transform.right * input.x + transform.up * input.y;
         movementDirection = movementDirection.normalized;
 
-        Vector3 movement = Vector2.zero;
+        Vector3 movement = Vector3.zero;
         movement.x = movementDirection.x * movementSpeed * Time.deltaTime;
         movement.y = movementDirection.y * movementSpeed * Time.deltaTime;
         movement.z = movementDirection.z * movementSpeed * Time.deltaTime;
 
+        transform.position += movement;
+    }
 
-        transform.position = new Vector3(transform.position.x + movement.x, transform.position.y + movement.y, transform.position.z + movement.z);
+    void HandleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && !isInTransition)
+            LookAt(Vector3.zero);
+
+        if (Input.GetKeyDown(KeyCode.Alpha1) && !isInTransition)
+            SetPerspective(new Vector3(0, 3, 0), Vector3.zero);
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && !isInTransition)
+            SetPerspective(new Vector3(-2, 2.5f, -4.5f), Vector3.zero);
+    }
+
+    void LookAt(Vector3 target)
+    {
+        targetRotation = Quaternion.LookRotation(target - transform.position);
+        isInTransition = true;
+        targetPosition = transform.position;
+    }
+
+    void SetPerspective(Vector3 position, Vector3 lookAtPoint)
+    {
+        targetPosition = position;
+        targetRotation = Quaternion.LookRotation(lookAtPoint - position);
+        isInTransition = true;
     }
 }
