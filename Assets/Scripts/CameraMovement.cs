@@ -7,9 +7,10 @@ using Input = UnityEngine.Input;
 
 public class CameraMovement : MonoBehaviour
 {
-    enum Planet { MERCURY, VENUS, EARTH, MARS, JUPITER, SATURN, URANUS, NEPTUNE, NONE = -1};
-    Planet focusedPlanet = Planet.NONE;
+    enum Planet { MERCURY, VENUS, EARTH, MARS, JUPITER, SATURN, URANUS, NEPTUNE, NONE = -1}; //Enumerate planets
+    Planet focusedPlanet = Planet.NONE; //Start enumeration
 
+    //Information planets
     public float rotationSensibility;
     public float movementSpeed;
     public float transitionSpeed = 5f;
@@ -22,11 +23,13 @@ public class CameraMovement : MonoBehaviour
     Quaternion targetRotation;
     float lookAtAccuracyMargin = 0.001f;
 
-    [SerializeField] Camera cameraComponent;
-    [SerializeField] List<GameObject> planets;
+    
+    [SerializeField] Camera cameraComponent; //Reference camera
+    [SerializeField] List<GameObject> planets; //Reference planets
 
     void Start()
     {
+        //Cursor inside simulation
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -35,8 +38,7 @@ public class CameraMovement : MonoBehaviour
     {
         if (focusedPlanet != Planet.NONE)
         {
-            // 0.003 -> 1.5
-            // x
+            //Change visualization between planets
             int index = (int)focusedPlanet;
             float fieldOfView = planets[index].transform.localScale.x * 1.5f / 0.003f;
             cameraComponent.fieldOfView = fieldOfView;
@@ -50,10 +52,12 @@ public class CameraMovement : MonoBehaviour
 
             if (isInTransition)
             {
+                //Change form visualization planets
                 HandleTransition();
             }
             else
             {
+
                 HandleRotation();
                 HandleMovement();
             }

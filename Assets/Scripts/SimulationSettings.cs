@@ -49,12 +49,4 @@ public class SimulationSettings : MonoBehaviour
     {
         return baseStepTime * simulationSpeed;
     }
-
-    void AssignTrailSize()
-    {
-        if (mainCamera.transform.position.magnitude > distanceToChangeTrails)
-        {
-            distanceToChangeTrails.
-        }
-    }
 }
