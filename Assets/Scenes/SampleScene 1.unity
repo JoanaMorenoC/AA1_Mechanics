@@ -1517,6 +1517,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   simulationSpeed: 1
+  mainCamera: {fileID: 963194225}
+  planetTrails:
+  - {fileID: 1774529929}
+  - {fileID: 1502738764}
+  - {fileID: 2121754949}
+  - {fileID: 523871180}
+  - {fileID: 886618976}
+  - {fileID: 1705121481}
+  - {fileID: 1736681088}
+  - {fileID: 1864928350}
 --- !u!1 &1646543108
 GameObject:
   m_ObjectHideFlags: 0
