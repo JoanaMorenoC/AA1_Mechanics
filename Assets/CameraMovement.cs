@@ -1,12 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Windows;
+using Input = UnityEngine.Input;
 
 public class CameraMovement : MonoBehaviour
 {
     public float rotationSensibility;
     public float movementSpeed;
     public float transitionSpeed = 5f;
+    public float zoomSpeed;
 
     Vector2 rotation;
 
@@ -55,7 +59,11 @@ public class CameraMovement : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * rotationSensibility;
         float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * rotationSensibility;
 
-        rotation.x += mouseX;
+        if (transform.up.y >= 0f)
+            rotation.x += mouseX;
+        else
+            rotation.x -= mouseX;
+
         rotation.y -= mouseY;
 
         transform.rotation = Quaternion.Euler(rotation.y, rotation.x, 0);
@@ -78,8 +86,7 @@ public class CameraMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift))
             input.y -= 1;
 
-        Vector3 movementDirection = transform.forward * input.z + transform.right * input.x + transform.up * input.y;
-        movementDirection = movementDirection.normalized;
+        Vector3 movementDirection = GetMovementDirection(input);
 
         Vector3 movement = Vector3.zero;
         movement.x = movementDirection.x * movementSpeed * Time.deltaTime;
@@ -87,6 +94,21 @@ public class CameraMovement : MonoBehaviour
         movement.z = movementDirection.z * movementSpeed * Time.deltaTime;
 
         transform.position += movement;
+
+        HandleZoom();
+    }
+
+    void HandleZoom()
+    {
+        float zoom = 0.0f;
+
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+            zoom += zoomSpeed;
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+            zoom -= zoomSpeed;
+
+        Vector3 zoomVector = transform.forward * zoom;
+        transform.position += zoomVector;
     }
 
     void HandleInput()
@@ -112,5 +134,15 @@ public class CameraMovement : MonoBehaviour
         targetPosition = position;
         targetRotation = Quaternion.LookRotation(lookAtPoint - position);
         isInTransition = true;
+    }
+
+    Vector3 GetMovementDirection(Vector3 input)
+    {
+        Vector3 movementDirection = Vector3.zero;
+
+        movementDirection = transform.forward * input.z + transform.right * input.x + transform.up * input.y;
+        movementDirection = movementDirection.normalized;
+
+        return movementDirection;
     }
 }

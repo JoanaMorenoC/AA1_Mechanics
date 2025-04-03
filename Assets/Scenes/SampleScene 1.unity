@@ -1158,6 +1158,7 @@ MonoBehaviour:
   rotationSensibility: 500
   movementSpeed: 8
   transitionSpeed: 5
+  zoomSpeed: 0.4
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
