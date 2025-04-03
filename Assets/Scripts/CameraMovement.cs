@@ -7,7 +7,7 @@ using Input = UnityEngine.Input;
 
 public class CameraMovement : MonoBehaviour
 {
-    enum Planet { MERCURY, VENUS, EARTH, MARS, JUPITER, SATURN, URANUS, NEPTUNE, MOON, NONE = -1};
+    enum Planet { MERCURY, VENUS, EARTH, MARS, JUPITER, SATURN, URANUS, NEPTUNE, NONE = -1};
     Planet focusedPlanet = Planet.NONE;
 
     public float rotationSensibility;
@@ -35,9 +35,12 @@ public class CameraMovement : MonoBehaviour
     {
         if (focusedPlanet != Planet.NONE)
         {
-            cameraComponent.fieldOfView = 1.5f;
+            // 0.003 -> 1.5
+            // x
             int index = (int)focusedPlanet;
-            transform.position = planets[index].transform.position + new Vector3(0.0f, 0.25f, -0.25f);
+            float fieldOfView = planets[index].transform.localScale.x * 1.5f / 0.003f;
+            cameraComponent.fieldOfView = fieldOfView;
+            transform.position = planets[index].transform.position + new Vector3(0.0f, 0.3f, -0.3f);
             transform.rotation = Quaternion.LookRotation(planets[index].transform.position - transform.position);
 
         }
@@ -147,9 +150,13 @@ public class CameraMovement : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3) && !isInTransition)
-            focusedPlanet = Planet.EARTH;
-        else
-            focusedPlanet = Planet.NONE;
+        {
+            if (focusedPlanet == Planet.NEPTUNE)
+                focusedPlanet = 0;
+            else
+                focusedPlanet = focusedPlanet + 1;
+        }
+
     }
 
     void LookAt(Vector3 target)

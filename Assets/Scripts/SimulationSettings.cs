@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SimulationSettings : MonoBehaviour
 {
     public static SimulationSettings Instance { get; private set; }
     public float simulationSpeed = 1.0f;
-
+    [SerializeField] GameObject mainCamera;
+    [SerializeField] List<TrailRenderer> planets;
     float baseStepTime = 0.0001f;
+    float distanceToChangeTrails = 4f;
 
     private void Awake()
     {
@@ -38,11 +41,20 @@ public class SimulationSettings : MonoBehaviour
                 simulationSpeed += 0.5f;
         }
 
+
     }
 
 
     public float GetStepTime()
     {
         return baseStepTime * simulationSpeed;
+    }
+
+    void AssignTrailSize()
+    {
+        if (mainCamera.transform.position.magnitude > distanceToChangeTrails)
+        {
+            distanceToChangeTrails.
+        }
     }
 }

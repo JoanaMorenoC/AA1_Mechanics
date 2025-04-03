@@ -12,7 +12,7 @@ public class ElementGenerator : MonoBehaviour
     [SerializeField] float minMass;
     [SerializeField] float maxMass;
 
-    float spawningPositionOffset = 0.1f;
+    float spawningPositionOffset = 0.301f;
 
     private void Update()
     {

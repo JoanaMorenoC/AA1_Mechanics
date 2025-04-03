@@ -6,7 +6,7 @@ public class ElementSettingsScript : MonoBehaviour
 {
     public GravityPhysics physics;
 
-    float massToSizeMultiplier = 0.01f;
+    float massToSizeMultiplier = 1000000f;
 
     public struct ElementSettings
     {
