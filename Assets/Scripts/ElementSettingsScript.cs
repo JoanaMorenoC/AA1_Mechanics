@@ -6,7 +6,7 @@ public class ElementSettingsScript : MonoBehaviour
 {
     public GravityPhysics physics;
 
-    float massToSizeMultiplier = 1e-8f;
+    float massToSizeMultiplier = 0.01f;
 
     public struct ElementSettings
     {
@@ -26,7 +26,7 @@ public class ElementSettingsScript : MonoBehaviour
 
     void SetSize(float mass)
     {
-        float size = mass * massToSizeMultiplier;
+        float size = 0.01f;//mass * massToSizeMultiplier;
 
         transform.localScale = Vector3.one * size;
     }

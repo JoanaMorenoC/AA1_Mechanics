@@ -7,6 +7,9 @@ using Input = UnityEngine.Input;
 
 public class CameraMovement : MonoBehaviour
 {
+    enum Planet { MERCURY, VENUS, EARTH, MARS, JUPITER, SATURN, URANUS, NEPTUNE, MOON, NONE = -1};
+    Planet focusedPlanet = Planet.NONE;
+
     public float rotationSensibility;
     public float movementSpeed;
     public float transitionSpeed = 5f;
@@ -19,6 +22,9 @@ public class CameraMovement : MonoBehaviour
     Quaternion targetRotation;
     float lookAtAccuracyMargin = 0.001f;
 
+    [SerializeField] Camera cameraComponent;
+    [SerializeField] List<GameObject> planets;
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -27,14 +33,27 @@ public class CameraMovement : MonoBehaviour
 
     void Update()
     {
-        if (isInTransition)
+        if (focusedPlanet != Planet.NONE)
         {
-            HandleTransition();
+            cameraComponent.fieldOfView = 1.5f;
+            int index = (int)focusedPlanet;
+            transform.position = planets[index].transform.position + new Vector3(0.0f, 0.25f, -0.25f);
+            transform.rotation = Quaternion.LookRotation(planets[index].transform.position - transform.position);
+
         }
         else
         {
-            HandleRotation();
-            HandleMovement();
+            cameraComponent.fieldOfView = 60f;
+
+            if (isInTransition)
+            {
+                HandleTransition();
+            }
+            else
+            {
+                HandleRotation();
+                HandleMovement();
+            }
         }
 
         HandleInput();
@@ -117,9 +136,20 @@ public class CameraMovement : MonoBehaviour
             LookAt(Vector3.zero);
 
         if (Input.GetKeyDown(KeyCode.Alpha1) && !isInTransition)
+        {
             SetPerspective(new Vector3(0, 3, 0), Vector3.zero);
+            focusedPlanet = Planet.NONE;
+        }
         else if (Input.GetKeyDown(KeyCode.Alpha2) && !isInTransition)
+        {
             SetPerspective(new Vector3(-2, 2.5f, -4.5f), Vector3.zero);
+            focusedPlanet = Planet.NONE;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3) && !isInTransition)
+            focusedPlanet = Planet.EARTH;
+        else
+            focusedPlanet = Planet.NONE;
     }
 
     void LookAt(Vector3 target)

@@ -12,6 +12,8 @@ public class ElementGenerator : MonoBehaviour
     [SerializeField] float minMass;
     [SerializeField] float maxMass;
 
+    float spawningPositionOffset = 0.1f;
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -24,7 +26,8 @@ public class ElementGenerator : MonoBehaviour
     {
         ElementSettingsScript.ElementSettings asteroidSettings;
 
-        asteroidSettings.startingPosition = mainCamera.transform.position;
+        Vector3 position = mainCamera.transform.position + mainCamera.transform.forward * spawningPositionOffset;
+        asteroidSettings.startingPosition = position;
         
         float speed = Random.Range(minSpeed, maxSpeed);
         Vector3 velocity = mainCamera.transform.forward * speed;
@@ -33,10 +36,10 @@ public class ElementGenerator : MonoBehaviour
         asteroidSettings.mass = Random.Range(minMass, maxMass);
 
         GameObject asteroid = Instantiate(asteroidPrefab);
+        asteroid.GetComponent<ElementSettingsScript>().SetSettings(asteroidSettings);
         asteroid.transform.SetParent(solarSystem.transform, true);
         asteroid.transform.position = asteroidSettings.startingPosition;
         Debug.Log("Posicion seteada: " + asteroid.transform.position);
-        asteroid.GetComponent<ElementSettingsScript>().SetSettings(asteroidSettings);
         asteroid.GetComponent<GravityPhysics>().enabled = false;
         asteroid.GetComponent<GravityPhysics>().enabled = true;
 
