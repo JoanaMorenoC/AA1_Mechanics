@@ -8,7 +8,6 @@ public class GravityPhysics : MonoBehaviour
 
     Vector3 position;
     [SerializeField] Vector3 velocityInUaPerYear;
-    Vector3 acceleration;
 
     static float G = 39.478f;
 
@@ -20,6 +19,8 @@ public class GravityPhysics : MonoBehaviour
         otherPlanets = transform.parent.GetComponentsInChildren<GravityPhysics>();
         Debug.Log("OtherPlanets size " + otherPlanets.Length);
         Debug.Log("Este objeto es:" + gameObject.name + "  Ha encontrado: " + otherPlanets[0].gameObject.name);
+        Debug.Log(gameObject.name + "  puesto en posición " + transform.position);
+
     }
 
     void Update()
@@ -45,8 +46,6 @@ public class GravityPhysics : MonoBehaviour
 
         velocityInUaPerYear += (k1_a + 2f * k2_a + 2f * k3_a + k4_a) * (h / 6f);
         position += (k1_v + 2f * k2_v + 2f * k3_v + k4_v) * (h / 6f);
-
-        acceleration = CalculateAcceleration();
     }
 
     Vector3 CalculateAccelerationAt(Vector3 pos)
@@ -95,8 +94,24 @@ public class GravityPhysics : MonoBehaviour
         return position;
     }
 
+    public void SetPosition(Vector3 newPosition)
+    {
+        transform.position = position;
+    }
+
     float GetMass()
     {
         return massInSolarMassUnits;
     }
+
+    public void SetMass(float newMass)
+    {
+        massInSolarMassUnits = newMass;
+    }
+
+    public void SetVelocity(Vector3 newVelocity)
+    {
+        velocityInUaPerYear = newVelocity;
+    }
+
 }
