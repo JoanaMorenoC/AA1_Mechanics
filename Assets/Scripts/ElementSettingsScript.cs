@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class ElementSettingsScript : MonoBehaviour
 {
-    public GravityPhysics physics;
+    public GravityPhysics physics; // Controller gravity
 
-    float massToSizeMultiplier = 10000000f;
+    float massToSizeMultiplier = 10000000f; //Multiplier for creating the size of the asteroids
 
+    //Values needed for creating all the objects of the simulation
     public struct ElementSettings
     {
         public Vector3 startingPosition;

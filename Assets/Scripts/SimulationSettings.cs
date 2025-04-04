@@ -7,7 +7,9 @@ using UnityEngine;
 
 public class SimulationSettings : MonoBehaviour
 {
-    public static SimulationSettings Instance { get; private set; }
+    public static SimulationSettings Instance { get; private set; } // Create the instance to use this script easily in other scripts
+
+    //Initialice values variable
     public float simulationSpeed = 1.0f;
     [SerializeField] GameObject mainCamera;
     [SerializeField] List<TrailRenderer> planetTrails;
@@ -20,7 +22,7 @@ public class SimulationSettings : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance != null && Instance != this) //It is an instance so we need only one in the scene
         {
             Destroy(this.gameObject);
         }
@@ -32,6 +34,7 @@ public class SimulationSettings : MonoBehaviour
 
     private void Update()
     {
+        //Control the speed of the simulation by changing the time that passed inside
         if (Input.GetKeyDown(KeyCode.LeftArrow) && simulationSpeed > 0)
         {
             if (simulationSpeed <= 1 )
@@ -50,7 +53,7 @@ public class SimulationSettings : MonoBehaviour
         AssignTrailSize();
     }
 
-
+    //Get the time that passed in the simulation
     public float GetStepTime()
     {
         return baseStepTime * simulationSpeed;
@@ -58,35 +61,38 @@ public class SimulationSettings : MonoBehaviour
 
     void AssignTrailSize()
     {
+        //Change the trail of the planets or the Moon depending of the position of the camera
         if (mainCamera.transform.position.magnitude > distanceToChangeTrails && !bigTrailsActivated)
         {
+            //Increase the width of the trail
             bigTrailsActivated = true;
             for (int i = 0; i < planetTrails.Count; i++)
             {
                 AnimationCurve curve = new AnimationCurve(planetTrails[i].widthCurve.keys);
 
-                if (curve.keys.Length > 0 && curve.keys[0].value < minimumSizeToChangeTrailSize)
+                if (curve.keys.Length > 0 && curve.keys[0].value < minimumSizeToChangeTrailSize) //Check if we made the change of width 
                 {
-                    curve.RemoveKey(0);
-                    curve.AddKey(0f, newTrailSize);
+                    curve.RemoveKey(0); // Delete value trail
+                    curve.AddKey(0f, newTrailSize); // New value trail
 
-                    planetTrails[i].widthCurve = curve;
+                    planetTrails[i].widthCurve = curve; //Change width trail
                 }
             }
         }
         else if (mainCamera.transform.position.magnitude <= distanceToChangeTrails && bigTrailsActivated)
         {
+            //Return to the original values of width in the trail
             bigTrailsActivated = false;
             for (int i = 0; i < planetTrails.Count; i++)
             {
                 AnimationCurve curve = new AnimationCurve(planetTrails[i].widthCurve.keys);
 
-                if (curve.keys.Length > 0 && curve.keys[0].value == newTrailSize)
+                if (curve.keys.Length > 0 && curve.keys[0].value == newTrailSize) //Check if we made the change of width 
                 {
-                    curve.RemoveKey(0);
-                    curve.AddKey(0f, planetTrails[i].transform.localScale.x);
+                    curve.RemoveKey(0); // Delete value trail
+                    curve.AddKey(0f, planetTrails[i].transform.localScale.x); // New value trail
 
-                    planetTrails[i].widthCurve = curve;
+                    planetTrails[i].widthCurve = curve; //Change width trail
                 }
             }
         }

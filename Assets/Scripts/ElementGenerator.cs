@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ElementGenerator : MonoBehaviour
 {
+    //Initialization of all the variables necessaries for making the asteroids
     [SerializeField] GameObject mainCamera;
     [SerializeField] GameObject solarSystem;
     [SerializeField] GameObject asteroidPrefab;
@@ -16,7 +15,7 @@ public class ElementGenerator : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0)) //Click left
         {
             SpawnAsteroid();
         }
@@ -24,22 +23,24 @@ public class ElementGenerator : MonoBehaviour
 
     void SpawnAsteroid()
     {
-        ElementSettingsScript.ElementSettings asteroidSettings;
+        ElementSettingsScript.ElementSettings asteroidSettings; //Initialization asteroid with the controller of objects
 
-        Vector3 position = mainCamera.transform.position + mainCamera.transform.forward * spawningPositionOffset;
+        //Initialization of all the values necessaries for making the asteroids
+
+        Vector3 position = mainCamera.transform.position + mainCamera.transform.forward * spawningPositionOffset; //Initial position in front of the camera
         asteroidSettings.startingPosition = position;
         
         float speed = Random.Range(minSpeed, maxSpeed);
-        Vector3 velocity = mainCamera.transform.forward * speed;
+        Vector3 velocity = mainCamera.transform.forward * speed; // Direction of the movement of the asteroid
         asteroidSettings.startingVelocity = velocity;
 
         asteroidSettings.mass = Random.Range(minMass, maxMass);
 
-        GameObject asteroid = Instantiate(asteroidPrefab);
+        GameObject asteroid = Instantiate(asteroidPrefab); //Creation of the object
+        //Initializaction values to the asteroid
         asteroid.GetComponent<ElementSettingsScript>().SetSettings(asteroidSettings);
         asteroid.transform.SetParent(solarSystem.transform, true);
         asteroid.transform.position = asteroidSettings.startingPosition;
-        Debug.Log("Posicion seteada: " + asteroid.transform.position);
         asteroid.GetComponent<GravityPhysics>().enabled = false;
         asteroid.GetComponent<GravityPhysics>().enabled = true;
 
