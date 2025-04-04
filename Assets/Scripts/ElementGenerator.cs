@@ -11,12 +11,13 @@ public class ElementGenerator : MonoBehaviour
     [SerializeField] float maxSpeed;
     [SerializeField] float minMass;
     [SerializeField] float maxMass;
+    [SerializeField] SimulationSettings simulationSettings;
 
     float spawningPositionOffset = 0.301f;
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && simulationSettings.GetStepTime() > 0.01f)
         {
             SpawnAsteroid();
         }

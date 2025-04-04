@@ -2307,6 +2307,7 @@ MonoBehaviour:
   maxSpeed: 3
   minMass: 1e-10
   maxMass: 0.00000001
+  simulationSettings: {fileID: 1561504196}
 --- !u!4 &1758076491
 Transform:
   m_ObjectHideFlags: 0
