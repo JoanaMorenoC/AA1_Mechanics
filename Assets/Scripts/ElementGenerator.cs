@@ -16,7 +16,7 @@ public class ElementGenerator : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && simulationSettings.GetStepTime() > 0.01f) //Click left + Check speed simulation
+        if (Input.GetMouseButtonDown(0) && simulationSettings.simulationSpeed > 0.01f) //Click left + Check speed simulation
         {
             SpawnAsteroid();
         }
